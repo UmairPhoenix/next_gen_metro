@@ -1,0 +1,81 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:next_gen_metro/utils/app_theme_data.dart';
+
+import '../utils/app_routes.dart';
+
+class OnboardingPage extends StatelessWidget {
+  const OnboardingPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Column(
+      children: [
+        Container(
+          height: 280.h,
+          decoration: BoxDecoration(
+            color: darkBrown,
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(25),
+              bottomRight: Radius.circular(25),
+            ),
+          ),
+          child: Center(
+            child: SizedBox(
+              height: 120.h,
+              child: Image.asset(
+                "assets/logo.png",
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 320.h,
+          width: double.infinity,
+          child: Image.asset(
+            'assets/secret.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+        Expanded(
+          child: Container(
+            width: double.infinity,
+            color: darkBrown,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 35.h,
+                ),
+                Text(
+                  "Unlock Art's Secrets",
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(
+                  height: 25.h,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, Routes.startPage);
+                  },
+                  child: Text(
+                    "Get started",
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: darkBrown,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        )
+      ],
+    ));
+  }
+}
