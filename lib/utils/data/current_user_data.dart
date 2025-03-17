@@ -1,4 +1,4 @@
-import '../../mdoels/user_model.dart';
+import '../../models/user_model.dart';
 
 class CurrentUserData {
   static UserModel? currentUser;

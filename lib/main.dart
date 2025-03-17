@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:next_gen_metro/utils/app_routes.dart';
 import 'package:next_gen_metro/utils/app_theme_data.dart';
-import 'package:next_gen_metro/utils/providers.dart';
-import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,15 +24,12 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MultiProvider(
-          providers: providers,
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Flutter Demo',
-            theme: themeData(),
-            routes: Routes.generateRoutes(),
-            initialRoute: Routes.startPage,
-          ),
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Flutter Demo',
+          theme: themeData(),
+          routes: Routes.generateRoutes(),
+          initialRoute: Routes.homePage,
         );
       },
     );

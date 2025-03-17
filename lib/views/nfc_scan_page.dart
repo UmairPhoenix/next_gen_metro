@@ -1,55 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:next_gen_metro/view_model/nfc_view_model.dart';
-import 'package:provider/provider.dart';
+import 'package:next_gen_metro/utils/app_theme_data.dart';
 
-class NfcScanPage extends StatefulWidget {
+class NfcScanPage extends StatelessWidget {
   const NfcScanPage({super.key});
 
   @override
-  State<NfcScanPage> createState() => _NfcScanPageState();
-}
-
-class _NfcScanPageState extends State<NfcScanPage> {
-  @override
   Widget build(BuildContext context) {
-    NfcViewModel nfcViewModel = Provider.of<NfcViewModel>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('NFC Scanner'),
+        title: const Text("NFC Scan"),
+        backgroundColor: darkBrown,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            height: 250.h,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: AssetImage('assets/nfc_tag.png'),
-              ),
-            ),
-          ),
-          SizedBox(height: 100.h),
-          !nfcViewModel.isSearchingTag
-              ? FilledButton(
+          Center(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.nfc,
+                  size: 100.sp,
+                  color: darkBrown,
+                ),
+                SizedBox(height: 20.h),
+                Text(
+                  "Tap your card to scan",
+                  style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 30.h),
+                ElevatedButton(
                   onPressed: () {
-                    nfcViewModel.startNfcSession(context);
+                    // TODO: Implement NFC scanning logic
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
-                    child: Text('Start Scanning'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: darkBrown,
+                    padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 15.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.r),
+                    ),
                   ),
-                )
-              : const CircularProgressIndicator(),
-          SizedBox(height: 20.h),
-          OutlinedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 60),
-              child: Text('Cancel'),
+                  child: Text(
+                    "Start Scan",
+                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

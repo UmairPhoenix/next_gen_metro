@@ -32,7 +32,7 @@ class _MuseumWelcomePageState extends State<MuseumWelcomePage> {
           Image.asset('assets/museum_image.png'),
           FilledButton(
             onPressed: () {
-              Navigator.pushNamed(context, Routes.museumInfoPage);
+              Navigator.pushNamed(context, Routes.homePage);
             },
             child: const Text('More Information'),
           ),
