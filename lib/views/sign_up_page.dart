@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:next_gen_metro/views/home_page.dart';
 import '../utils/app_theme_data.dart';
 import '../utils/widgets/custom_text_field.dart';
 
@@ -43,8 +44,8 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 height: 150.h,
                 child: Image.asset(
-                  'assets/logo.png',
-                  color: lightBrown,
+                  'assets/NextGen.png',
+                  // color: lightBrown,
                 ),
               ),
               SizedBox(height: 20.h),
@@ -126,13 +127,17 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(height: 50.h),
               ElevatedButton(
                 onPressed: () {
-                  if (formKey.currentState!.validate()) {
-                    if (passwordController.text != confirmPasswordController.text) {
-                      // Handle password mismatch
-                    } else {
-                      // Handle successful validation
-                    }
-                  }
+                  // if (formKey.currentState!.validate()) {
+                  //   if (passwordController.text != confirmPasswordController.text) {
+                  //     // Handle password mismatch
+                  //   } else {
+                  //     // Handle successful validation
+                  //   }
+                  // }
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
                 },
                 style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
                   backgroundColor: MaterialStateProperty.all<Color>(lightBrown),
@@ -141,7 +146,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child: Text(
                     "Sign-up",
-                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),

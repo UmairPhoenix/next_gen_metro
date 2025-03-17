@@ -40,4 +40,6 @@ class UserModel {
       balance: (json['balance'] ?? 0.0) as double,
     );
   }
+
+  get profilePicture => null;
 }

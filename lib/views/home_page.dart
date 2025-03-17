@@ -24,8 +24,8 @@ class HomePage extends StatelessWidget {
               child: SizedBox(
                 height: 100.h,
                 child: Image.asset(
-                  "assets/logo.png",
-                  color: Colors.white,
+                  "assets/NextGen.png",
+                  // color: Colors.white,
                 ),
               ),
             ),

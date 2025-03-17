@@ -24,7 +24,7 @@ class StartPage extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 54.w),
           child: Text(
-            "Unlock the Wonders of art with a tap.Your personal museum companion awaits",
+            "Experience seamless travel with a tap. Your NextGen Metro companion awaits!",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16.sp,

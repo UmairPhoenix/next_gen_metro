@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:next_gen_metro/utils/app_theme_data.dart';
 import 'package:next_gen_metro/utils/widgets/custom_text_field.dart';
+import 'package:next_gen_metro/views/home_page.dart';
+import 'package:next_gen_metro/views/sign_up_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -39,8 +41,8 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 150.h,
                 child: Image.asset(
-                  'assets/logo.png',
-                  color: lightBrown,
+                  'assets/NextGen.png',
+                  // color: lightBrown,
                 ),
               ),
               const SizedBox(height: 50),
@@ -98,9 +100,13 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 85.h),
               ElevatedButton(
                 onPressed: () {
-                  if (formKey.currentState!.validate()) {
-                    // Handle successful validation
-                  }
+                  // if (formKey.currentState!.validate()) {
+                  //   // Handle successful validation
+                  // }
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
                 },
                 style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
                   backgroundColor: MaterialStateProperty.all<Color>(lightBrown),
@@ -109,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child: Text(
                     "Login",
-                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),
@@ -123,7 +129,12 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 20.h),
               ElevatedButton(
-                onPressed: () {}, // Removed navigation to signup page
+                onPressed: () {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignUpPage()),
+                );
+                }, // Removed navigation to signup page
                 style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
                   backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
                 ),
