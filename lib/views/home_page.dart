@@ -55,27 +55,26 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             child: Center(
-  child: SizedBox(
-    height: 100.h,
-    child: Text(
-      'N',
-      style: TextStyle(
-        fontSize: 64.sp,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      ),
-    ),
-  ),
-),),
+              child: SizedBox(
+                height: 100.h,
+                child: Text(
+                  'N',
+                  style: TextStyle(
+                    fontSize: 64.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
 
           SizedBox(height: 20.h),
 
           SizedBox(height: 20.h),
 
           // Active screen
-          Expanded(
-            child: _pages[_selectedIndex],
-          ),
+          Expanded(child: _pages[_selectedIndex]),
         ],
       ),
 
@@ -87,7 +86,10 @@ class _HomePageState extends State<HomePage> {
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.credit_card), label: 'Top-up'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.credit_card),
+            label: 'Top-up',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.nfc), label: 'NFC'),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Routes'),
           BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),

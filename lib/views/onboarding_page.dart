@@ -22,15 +22,19 @@ class OnboardingPage extends StatelessWidget {
             ),
           ),
           child: Center(
-            child: SizedBox(
-              height: 120.h,
-              child: Image.asset(
-                "assets/logo.png",
-                color: Colors.white,
+              child: SizedBox(
+                height: 100.h,
+                child: Text(
+                  'N',
+                  style: TextStyle(
+                    fontSize: 64.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ),
-        ),
         SizedBox(
           height: 320.h,
           width: double.infinity,
@@ -49,7 +53,7 @@ class OnboardingPage extends StatelessWidget {
                   height: 35.h,
                 ),
                 Text(
-                  "Unlock Art's Secrets",
+                  "Next Gen Expierience in Transport",
                   style: TextStyle(
                     fontSize: 18.sp,
                     color: Colors.white,

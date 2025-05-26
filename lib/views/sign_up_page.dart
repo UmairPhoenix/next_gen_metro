@@ -42,11 +42,20 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(height: 80.h),
               SizedBox(
                 height: 150.h,
-                child: Image.asset(
-                  'assets/logo.png',
-                  color: lightBrown,
+                child: Center(
+              child: SizedBox(
+                height: 100.h,
+                child: Text(
+                  'N',
+                  style: TextStyle(
+                    fontSize: 64.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.brown,
+                  ),
                 ),
               ),
+            ),
+          ),
               SizedBox(height: 20.h),
               Text(
                 "Create your account",
@@ -141,7 +150,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child: Text(
                     "Sign-up",
-                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),

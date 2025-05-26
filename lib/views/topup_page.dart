@@ -24,14 +24,21 @@ class _TopupPageState extends State<TopupPage> {
             SizedBox(height: 20.h),
 
             TextField(
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "Amount",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.currency_rupee),
-              ),
-            ),
+  controller: _amountController,
+  keyboardType: TextInputType.number,
+  decoration: InputDecoration(
+    labelText: "Amount",
+    border: OutlineInputBorder(),
+    prefixIcon: Padding(
+      padding: EdgeInsets.all(12),
+      child: Text(
+        "PKR",
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+    ),
+  ),
+)
+,
 
             SizedBox(height: 20.h),
 
@@ -64,17 +71,30 @@ class _TopupPageState extends State<TopupPage> {
             SizedBox(height: 30.h),
 
             SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  final amount = _amountController.text;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Top-up request: Rs. $amount via $_selectedMethod')),
-                  );
-                },
-                child: const Text("Top Up Now"),
-              ),
-            ),
+  width: double.infinity,
+  child: ElevatedButton(
+    onPressed: () {
+      final amount = _amountController.text;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Top-up request: Rs. $amount via $_selectedMethod')),
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.brown,
+      side: const BorderSide(color: Colors.brown, width: 2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12), // Rounded corners
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 16), // Optional: taller button
+    ),
+    child: const Text(
+      "Top Up Now",
+      style: TextStyle(fontWeight: FontWeight.bold),
+    ),
+  ),
+),
+
           ],
         ),
       ),

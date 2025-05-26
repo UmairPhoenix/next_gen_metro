@@ -4,22 +4,19 @@ import 'package:next_gen_metro/utils/app_theme_data.dart';
 import 'package:next_gen_metro/utils/widgets/custom_text_field.dart';
 import '../utils/app_routes.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class AdminLoginPage extends StatefulWidget {
+  const AdminLoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<AdminLoginPage> createState() => _AdminLoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  //-------------------------------------------------------------------------
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+class _AdminLoginPageState extends State<AdminLoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   bool obscurePassword = true;
-
   final formKey = GlobalKey<FormState>();
-  //-------------------------------------------------------------------------
 
   @override
   void dispose() {
@@ -27,6 +24,22 @@ class _LoginPageState extends State<LoginPage> {
     passwordController.dispose();
     super.dispose();
   }
+
+  void handleAdminLogin() {
+  if (formKey.currentState!.validate()) {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    if (email == 'admin@metro.com' && password == 'admin123') {
+      Navigator.pushReplacementNamed(context, Routes.adminDashboard);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Invalid admin credentials")),
+      );
+    }
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -40,15 +53,12 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 150.h,
                 child: Center(
-                  child: SizedBox(
-                    height: 100.h,
-                    child: Text(
-                      'N',
-                      style: TextStyle(
-                        fontSize: 64.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.brown,
-                      ),
+                  child: Text(
+                    'N',
+                    style: TextStyle(
+                      fontSize: 64.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.brown,
                     ),
                   ),
                 ),
@@ -58,17 +68,17 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.symmetric(horizontal: 30.w),
                 child: customTextField(
                   controller: emailController,
-                  hintText: 'Email',
-                  prefixIcon: Icon(Icons.person, color: lightBrown),
+                  hintText: 'Admin Email',
+                  prefixIcon: Icon(Icons.admin_panel_settings, color: lightBrown),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Email can\'t be empty';
                     }
                     bool isValidEmail = RegExp(
-                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                      r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
                     ).hasMatch(value);
                     if (!isValidEmail) {
-                      return 'Email format is not correct';
+                      return 'Enter a valid email';
                     }
                     return null;
                   },
@@ -93,61 +103,34 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.only(left: 180.w),
                 child: TextButton(
                   style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(
-                      lightBrown,
-                    ),
+                    foregroundColor: MaterialStateProperty.all<Color>(lightBrown),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    // TODO: forgot password logic (optional)
+                  },
                   child: const Text("Forgot Password?"),
                 ),
               ),
               SizedBox(height: 85.h),
               ElevatedButton(
-                onPressed: () {
-                  if (formKey.currentState!.validate()) {
-                    // Handle successful validation
-                  }
-                },
+                onPressed: handleAdminLogin,
                 style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
                   backgroundColor: MaterialStateProperty.all<Color>(lightBrown),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child: Text(
-                    "Login",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    "Admin Login",
+                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),
               SizedBox(height: 20.h),
               Text(
-                "Don't have an account?",
-                style: TextStyle(fontSize: 16.sp, color: darkBrown),
-              ),
-              SizedBox(height: 20.h),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, Routes.signUpPage);
-                },
-                style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    Colors.white,
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30.w),
-                  child: Text(
-                    "Sign-up",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: lightBrown,
-                    ),
-                  ),
+                "Admin access only",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.grey,
                 ),
               ),
             ],
