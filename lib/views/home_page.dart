@@ -1,16 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:next_gen_metro/utils/app_theme_data.dart';
-import '../utils/app_routes.dart';
+import 'package:next_gen_metro/views/history_page.dart';
+import 'package:next_gen_metro/views/nfc_scan_page.dart';
+import 'package:next_gen_metro/views/profile_page.dart';
+import 'package:next_gen_metro/views/route_info_page.dart';
+import 'package:next_gen_metro/views/topup_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = const [
+    TopupPage(),
+    NfcScanPage(),
+    RouteInfoPage(),
+    HistoryPage(),
+    ProfilePage(),
+  ];
+
+  final List<String> _titles = [
+    "Top-up",
+    "Scan NFC",
+    "Route Info",
+    "History",
+    "Profile",
+  ];
+
+  void _onTabSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
+          // Top logo section
           Container(
             height: 180.h,
             decoration: BoxDecoration(
@@ -21,93 +55,44 @@ class HomePage extends StatelessWidget {
               ),
             ),
             child: Center(
-              child: SizedBox(
-                height: 100.h,
-                child: Image.asset(
-                  "assets/logo.png",
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
+  child: SizedBox(
+    height: 100.h,
+    child: Text(
+      'N',
+      style: TextStyle(
+        fontSize: 64.sp,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+    ),
+  ),
+),),
+
           SizedBox(height: 20.h),
-          Text(
-            "Welcome to NextGen Metro",
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-              color: darkBrown,
-            ),
-          ),
+
           SizedBox(height: 20.h),
+
+          // Active screen
           Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              padding: EdgeInsets.all(16.w),
-              crossAxisSpacing: 16.w,
-              mainAxisSpacing: 16.h,
-              children: [
-                _dashboardTile(
-                  context,
-                  icon: Icons.credit_card,
-                  label: "Top-up",
-                  route: Routes.topupPage,
-                ),
-                _dashboardTile(
-                  context,
-                  icon: Icons.nfc,
-                  label: "Scan NFC",
-                  route: Routes.nfcScanPage,
-                ),
-                _dashboardTile(
-                  context,
-                  icon: Icons.map,
-                  label: "Route Info",
-                  route: Routes.routeInfoPage,
-                ),
-                _dashboardTile(
-                  context,
-                  icon: Icons.history,
-                  label: "History",
-                  route: Routes.historyPage,
-                ),
-                _dashboardTile(
-                  context,
-                  icon: Icons.account_circle,
-                  label: "Profile",
-                  route: Routes.profilePage,
-                ),
-              ],
-            ),
+            child: _pages[_selectedIndex],
           ),
         ],
       ),
-    );
-  }
 
-  Widget _dashboardTile(BuildContext context, {required IconData icon, required String label, required String route}) {
-    return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, route),
-      child: Container(
-        decoration: BoxDecoration(
-          color: darkBrown,
-          borderRadius: BorderRadius.circular(15.r),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 40.sp, color: Colors.white),
-            SizedBox(height: 10.h),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 16.sp,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+      // Bottom navigation bar
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onTabSelected,
+        selectedItemColor: darkBrown,
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.credit_card), label: 'Top-up'),
+          BottomNavigationBarItem(icon: Icon(Icons.nfc), label: 'NFC'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Routes'),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
       ),
     );
   }

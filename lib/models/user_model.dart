@@ -7,6 +7,7 @@ class UserModel {
   final String phoneNumber;
   final List<RouteHistoryModel> routeHistory;
   final double balance;
+  final bool isAdmin; // ✅ new field
 
   UserModel({
     required this.userName,
@@ -15,6 +16,7 @@ class UserModel {
     required this.phoneNumber,
     this.routeHistory = const [],
     this.balance = 0.0,
+    this.isAdmin = false, // ✅ default to false
   });
 
   Map<String, dynamic> toJson() {
@@ -25,6 +27,7 @@ class UserModel {
       'phoneNumber': phoneNumber,
       'routeHistory': routeHistory.map((history) => history.toJson()).toList(),
       'balance': balance,
+      'isAdmin': isAdmin, // ✅ include in JSON
     };
   }
 
@@ -38,6 +41,7 @@ class UserModel {
           .map((item) => RouteHistoryModel.fromJson(item))
           .toList(),
       balance: (json['balance'] ?? 0.0) as double,
+      isAdmin: json['isAdmin'] ?? false, // ✅ parse safely
     );
   }
 }
