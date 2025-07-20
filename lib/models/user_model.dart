@@ -1,47 +1,43 @@
-import 'package:next_gen_metro/models/route_history_model.dart';
-
 class UserModel {
-  final String userName;
-  final String userEmail;
-  final String userId;
-  final String phoneNumber;
-  final List<RouteHistoryModel> routeHistory;
+  final String id;
+  final String name;
+  final String email;
+  final String phone;
   final double balance;
-  final bool isAdmin; // ✅ new field
+  final String? nfcUid;
+  final bool isAdmin;
 
   UserModel({
-    required this.userName,
-    required this.userEmail,
-    required this.userId,
-    required this.phoneNumber,
-    this.routeHistory = const [],
-    this.balance = 0.0,
-    this.isAdmin = false, // ✅ default to false
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.balance,
+    this.nfcUid,
+    this.isAdmin = false,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'userName': userName,
-      'userEmail': userEmail,
-      'userId': userId,
-      'phoneNumber': phoneNumber,
-      'routeHistory': routeHistory.map((history) => history.toJson()).toList(),
+      'id': id,
+      'name': name,
+      'email': email,
+      'phone': phone,
       'balance': balance,
-      'isAdmin': isAdmin, // ✅ include in JSON
+      'nfcUid': nfcUid,
+      'isAdmin': isAdmin,
     };
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      userName: json['userName'] as String,
-      userEmail: json['userEmail'] as String,
-      userId: json['userId'] as String,
-      phoneNumber: json['phoneNumber'] as String,
-      routeHistory: (json['routeHistory'] as List? ?? [])
-          .map((item) => RouteHistoryModel.fromJson(item))
-          .toList(),
-      balance: (json['balance'] ?? 0.0) as double,
-      isAdmin: json['isAdmin'] ?? false, // ✅ parse safely
+      id: json['id'].toString(),
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      phone: json['phone'] ?? '',
+      balance: (json['balance'] ?? 0).toDouble(),
+      nfcUid: json['nfc_uid']?.toString(),
+      isAdmin: (json['role'] ?? '') == 'admin',
     );
   }
 }

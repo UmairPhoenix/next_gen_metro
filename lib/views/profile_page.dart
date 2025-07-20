@@ -9,14 +9,16 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = CurrentUserData.currentUser ?? UserModel(
-      userName: 'Mock User',
-      userEmail: 'mockuser@example.com',
-      userId: 'mock123',
-      phoneNumber: '03001234567',
-      balance: 500.0,
-      isAdmin: false,
-    );
+    final user = CurrentUserData.currentUser ??
+        UserModel(
+          id: 'mock123',
+          name: 'Mock User',
+          email: 'mockuser@example.com',
+          phone: '03001234567',
+          balance: 500.0,
+          nfcUid: null,
+          isAdmin: false,
+        );
 
     return Scaffold(
       body: Padding(
@@ -38,7 +40,7 @@ class ProfilePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user.userName.toUpperCase(),
+                      user.name.toUpperCase(),
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -46,7 +48,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      user.userEmail,
+                      user.email,
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: Colors.black54,
@@ -61,7 +63,7 @@ class ProfilePage extends StatelessWidget {
 
             Text("Phone Number", style: _labelStyle()),
             SizedBox(height: 5.h),
-            Text(user.phoneNumber, style: _valueStyle()),
+            Text(user.phone, style: _valueStyle()),
 
             SizedBox(height: 20.h),
 
@@ -84,13 +86,17 @@ class ProfilePage extends StatelessWidget {
                   // TODO: Sign out logic
                 },
                 icon: const Icon(Icons.logout, color: Colors.white),
-                label: const Text("Sign Out", style: TextStyle(
-                        color: Colors.white,
-                      ),),
+                label: const Text(
+                  "Sign Out",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: darkBrown,
                   padding: EdgeInsets.symmetric(vertical: 14.h),
-                  textStyle: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                  textStyle:
+                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
