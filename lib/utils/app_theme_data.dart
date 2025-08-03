@@ -8,7 +8,7 @@ ThemeData themeData() {
     primaryColor: darkBrown,
     primarySwatch: darkBrown,
     fontFamily: GoogleFonts.poppins().fontFamily,
-    //-------App Bar Theme-----------------------
+
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,
       elevation: 0,
@@ -21,31 +21,31 @@ ThemeData themeData() {
       ),
     ),
 
-    //-------Floating Action Button Themme-------
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: lightBrown,
     ),
+
     scaffoldBackgroundColor: Colors.white,
-    //------------Alert Dialogue Theme----------
-    dialogTheme: DialogTheme(
+
+    dialogTheme: DialogThemeData( // ✅ Correct type
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(25),
       ),
     ),
+
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white,
         shape: const StadiumBorder(),
       ),
     ),
+
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
         shape: MaterialStateProperty.resolveWith<OutlinedBorder?>(
-          (states) {
-            return RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25),
-            );
-          },
+          (_) => RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
         ),
       ),
     ),
@@ -75,4 +75,3 @@ class MaterialColorGenerator {
     });
   }
 }
-//---------------------------------------------------------

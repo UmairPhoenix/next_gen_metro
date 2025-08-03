@@ -19,7 +19,7 @@ Widget drawer(BuildContext context) {
               ),
               const SizedBox(width: 20),
               Text(
-                CurrentUserData.currentUser!.userName.toUpperCase(),
+                CurrentUserData.currentUser!.name.toUpperCase(),
                 style: TextStyle(
                   fontSize: 23.sp,
                   fontWeight: FontWeight.bold,
