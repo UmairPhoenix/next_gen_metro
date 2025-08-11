@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:next_gen_metro/utils/app_theme_data.dart';
 import 'package:next_gen_metro/utils/widgets/custom_text_field.dart';
 import '../utils/app_routes.dart';
+import '../services/api_service.dart';
 
 class AdminLoginPage extends StatefulWidget {
   const AdminLoginPage({super.key});
@@ -14,9 +15,9 @@ class AdminLoginPage extends StatefulWidget {
 class _AdminLoginPageState extends State<AdminLoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  bool obscurePassword = true;
   final formKey = GlobalKey<FormState>();
+  bool obscurePassword = true;
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -25,21 +26,34 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     super.dispose();
   }
 
-  void handleAdminLogin() {
-  if (formKey.currentState!.validate()) {
+  void handleAdminLogin() async {
+    if (!formKey.currentState!.validate()) return;
+
     final email = emailController.text.trim();
     final password = passwordController.text;
 
-    if (email == 'admin@metro.com' && password == 'admin123') {
-      Navigator.pushReplacementNamed(context, Routes.adminDashboard);
-    } else {
+    setState(() => isLoading = true);
+
+    try {
+      final response = await ApiService.adminLogin(email: email, password: password);
+      debugPrint('✅ Admin Login Response: $response');
+
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Invalid admin credentials")),
+        SnackBar(content: Text("Welcome, ${response['user']['name']}")),
       );
+
+      Navigator.pushReplacementNamed(context, Routes.adminDashboard);
+    } catch (e) {
+      debugPrint('❌ Admin Login Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      setState(() => isLoading = false);
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -71,15 +85,9 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                   hintText: 'Admin Email',
                   prefixIcon: Icon(Icons.admin_panel_settings, color: lightBrown),
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Email can\'t be empty';
-                    }
-                    bool isValidEmail = RegExp(
-                      r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
-                    ).hasMatch(value);
-                    if (!isValidEmail) {
-                      return 'Enter a valid email';
-                    }
+                    if (value == null || value.isEmpty) return 'Email can\'t be empty';
+                    bool isValidEmail = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$").hasMatch(value);
+                    if (!isValidEmail) return 'Enter a valid email';
                     return null;
                   },
                 ),
@@ -106,32 +114,35 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     foregroundColor: MaterialStateProperty.all<Color>(lightBrown),
                   ),
                   onPressed: () {
-                    // TODO: forgot password logic (optional)
+                    // TODO: implement forgot password
                   },
                   child: const Text("Forgot Password?"),
                 ),
               ),
               SizedBox(height: 85.h),
               ElevatedButton(
-                onPressed: handleAdminLogin,
+                onPressed: isLoading ? null : handleAdminLogin,
                 style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
                   backgroundColor: MaterialStateProperty.all<Color>(lightBrown),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 30.w),
-                  child: Text(
-                    "Admin Login",
-                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
+                  child: isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                          "Admin Login",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
               SizedBox(height: 20.h),
               Text(
                 "Admin access only",
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 14.sp, color: Colors.grey),
               ),
             ],
           ),

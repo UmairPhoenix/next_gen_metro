@@ -7,6 +7,26 @@ class UserModel {
   final String? nfcUid;
   final bool isAdmin;
 
+UserModel copyWith({
+  String? id,
+  String? name,
+  String? email,
+  String? phone,
+  double? balance,
+  String? nfcUid,
+  bool? isAdmin,
+}) {
+  return UserModel(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    email: email ?? this.email,
+    phone: phone ?? this.phone,
+    balance: balance ?? this.balance,
+    nfcUid: nfcUid ?? this.nfcUid,
+    isAdmin: isAdmin ?? this.isAdmin,
+  );
+}
+
   UserModel({
     required this.id,
     required this.name,

@@ -43,6 +43,11 @@ dependencies:
   google_fonts: ^6.2.1
   http: ^1.4.0
   shared_preferences: ^2.5.3
+  csv: ^5.0.2
+  file_saver: ^0.2.12
+  path_provider: ^2.1.4
+  open_filex: ^4.5.0
+  syncfusion_flutter_xlsio: ^27.1.48
 
 dev_dependencies:
   flutter_test:
