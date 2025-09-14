@@ -28,11 +28,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
   final List<Widget> _pages = const [
     _ManageRoutesPage(),
     _ManageUsersPage(),
+    _ManageFaresPage(), // NEW
   ];
 
   final List<String> _titles = [
     "Manage Routes",
     "Manage Users",
+    "Manage Fares", // NEW
   ];
 
   void _onTabSelected(int index) {
@@ -94,6 +96,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.route), label: 'Routes'),
             BottomNavigationBarItem(icon: Icon(Icons.people_alt), label: 'Users'),
+            BottomNavigationBarItem(icon: Icon(Icons.attach_money), label: 'Fares'), // NEW
           ],
         ),
       ),
@@ -113,9 +116,17 @@ class _ManageRoutesPage extends StatefulWidget {
 class _ManageRoutesPageState extends State<_ManageRoutesPage> {
   final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
-  final categoryController = TextEditingController();
+  final categoryController = TextEditingController(); // used as "service"
   final startController = TextEditingController();
   final endController = TextEditingController();
+
+  // NEW: cities
+  final startCityController = TextEditingController();
+  final endCityController = TextEditingController();
+
+  // Optional helper for dropdown
+  final List<String> _services = const ['Orange', 'Speedo', 'Metro'];
+  String? _selectedService;
 
   List<dynamic> routes = [];
   bool isLoading = true;
@@ -134,6 +145,8 @@ class _ManageRoutesPageState extends State<_ManageRoutesPage> {
     categoryController.dispose();
     startController.dispose();
     endController.dispose();
+    startCityController.dispose();
+    endCityController.dispose();
     super.dispose();
   }
 
@@ -156,18 +169,36 @@ class _ManageRoutesPageState extends State<_ManageRoutesPage> {
   Future<void> _addRoute() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // validate service value explicitly
+    final svc = categoryController.text.trim();
+    if (!_services.contains(svc)) {
+      await showDialog(
+        context: context,
+        builder: (_) => _NiceDialog.error(
+          title: "Invalid Service",
+          message: "Service must be one of: Orange, Speedo, Metro.",
+        ),
+      );
+      return;
+    }
+
     setState(() => isSubmitting = true);
     try {
       await ApiService.addRoute(
         name: nameController.text.trim(),
-        category: categoryController.text.trim(),
+        category: svc, // mapped to "service" in ApiService
         start: startController.text.trim(),
         end: endController.text.trim(),
+        startCity: startCityController.text.trim(),
+        endCity: endCityController.text.trim(),
       );
       nameController.clear();
       categoryController.clear();
       startController.clear();
       endController.clear();
+      startCityController.clear();
+      endCityController.clear();
+      _selectedService = null;
 
       await showDialog(
         context: context,
@@ -212,9 +243,33 @@ class _ManageRoutesPageState extends State<_ManageRoutesPage> {
                 child: Column(
                   children: [
                     _LabeledField(controller: nameController, label: "Route Name"),
-                    _LabeledField(controller: categoryController, label: "Category (Metro/Speedo/Orange)"),
+                    // Keep your original field but make it a dropdown UX-wise while still writing to controller
+                    DropdownButtonFormField<String>(
+                      value: _selectedService,
+                      items: _services
+                          .map((s) => DropdownMenuItem<String>(value: s, child: Text(s)))
+                          .toList(),
+                      onChanged: (v) {
+                        setState(() {
+                          _selectedService = v;
+                          categoryController.text = v ?? '';
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Service (Orange/Speedo/Metro)",
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+                      ),
+                      validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                    ),
+                    SizedBox(height: 10.h),
+                    // Keep your original text field too (requested: don't remove anything)
+                    _LabeledField(controller: categoryController, label: "Service (Orange/Speedo/Metro)"),
                     _LabeledField(controller: startController, label: "Start Point"),
                     _LabeledField(controller: endController, label: "End Point"),
+                    // NEW: cities
+                    _LabeledField(controller: startCityController, label: "Start City"),
+                    _LabeledField(controller: endCityController, label: "End City"),
                     SizedBox(height: 10.h),
                     SizedBox(
                       width: double.infinity,
@@ -269,9 +324,17 @@ class _ManageRoutesPageState extends State<_ManageRoutesPage> {
               itemBuilder: (context, index) {
                 final r = (routes[index] as Map<String, dynamic>);
                 final name = (r['name'] ?? '').toString();
-                final category = (r['category'] ?? '').toString();
+                final service = (r['service'] ?? r['category'] ?? '').toString(); // support old field
                 final start = (r['start'] ?? '').toString();
                 final end = (r['end'] ?? '').toString();
+                final startCity = (r['startCity'] ?? '').toString();
+                final endCity = (r['endCity'] ?? '').toString();
+
+                final subtitle = [
+                  "From $start to $end",
+                  if (startCity.isNotEmpty || endCity.isNotEmpty) "($startCity → $endCity)",
+                  " • $service"
+                ].where((s) => s.trim().isNotEmpty).join('  ');
 
                 return Card(
                   elevation: 1.5,
@@ -283,7 +346,7 @@ class _ManageRoutesPageState extends State<_ManageRoutesPage> {
                       child: const Icon(Icons.alt_route, color: Colors.black87),
                     ),
                     title: Text(name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                    subtitle: Text("From $start to $end  •  $category"),
+                    subtitle: Text(subtitle),
                   ),
                 );
               },
@@ -329,7 +392,7 @@ class _ManageUsersPageState extends State<_ManageUsersPage> {
       selectAll = false;
     });
     try {
-      final data = await ApiService.fetchUsers(); // GET /admin/users
+      final data = await ApiService.fetchUsers(); // GET /admin/users (fallback to /users)
       setState(() => users = data);
     } catch (e) {
       setState(() => error = e.toString());
@@ -353,7 +416,7 @@ class _ManageUsersPageState extends State<_ManageUsersPage> {
 
     setState(() => deletingId = id);
     try {
-      await ApiService.deleteUser(id); // DELETE /admin/users/:id
+      await ApiService.deleteUser(id); // DELETE /admin/users/:id (fallback to /users/:id)
       _snack('User deleted');
       await _fetchUsers();
     } catch (e) {
@@ -738,6 +801,229 @@ class _ManageUsersPageState extends State<_ManageUsersPage> {
                   },
                 ),
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// ---------------------------- FARES PAGE (NEW) ----------------------------
+
+class _ManageFaresPage extends StatefulWidget {
+  const _ManageFaresPage();
+
+  @override
+  State<_ManageFaresPage> createState() => _ManageFaresPageState();
+}
+
+class _ManageFaresPageState extends State<_ManageFaresPage> {
+  final _formKey = GlobalKey<FormState>();
+  final priceController = TextEditingController();
+  String? _service;
+  final List<String> _services = const ['Orange', 'Speedo', 'Metro'];
+
+  bool isLoading = true;
+  bool isSubmitting = false;
+  String? error;
+  List<dynamic> fares = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchFares();
+  }
+
+  @override
+  void dispose() {
+    priceController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchFares() async {
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
+    try {
+      final data = await ApiService.getFares();
+      setState(() => fares = data);
+    } catch (e) {
+      setState(() => error = e.toString());
+      _snack('Failed to load fares');
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _saveFare() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => isSubmitting = true);
+    try {
+      final price = int.tryParse(priceController.text.trim()) ?? 0;
+      await ApiService.upsertFare(service: _service!, price: price);
+      priceController.clear();
+      _service = null;
+
+      await showDialog(
+        context: context,
+        builder: (_) => _NiceDialog.success(
+          title: "Fare Saved",
+          message: "Fare has been created/updated successfully.",
+        ),
+      );
+
+      await _fetchFares();
+    } catch (e) {
+      await showDialog(
+        context: context,
+        builder: (_) => _NiceDialog.error(
+          title: "Save Failed",
+          message: e.toString(),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => isSubmitting = false);
+    }
+  }
+
+  Future<void> _deleteFare(String service) async {
+    try {
+      await ApiService.deleteFare(service);
+      _snack('Fare deleted');
+      await _fetchFares();
+    } catch (e) {
+      await showDialog(
+        context: context,
+        builder: (_) => _NiceDialog.error(title: "Delete failed", message: e.toString()),
+      );
+    }
+  }
+
+  void _snack(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) return const Center(child: CircularProgressIndicator());
+
+    return RefreshIndicator(
+      onRefresh: _fetchFares,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _Card(
+              title: "Set Fare",
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: _service,
+                      items: _services
+                          .map((s) => DropdownMenuItem<String>(value: s, child: Text(s)))
+                          .toList(),
+                      onChanged: (v) => setState(() => _service = v),
+                      decoration: InputDecoration(
+                        labelText: "Service (Orange/Speedo/Metro)",
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+                      ),
+                      validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                    ),
+                    SizedBox(height: 10.h),
+                    TextFormField(
+                      controller: priceController,
+                      keyboardType: TextInputType.number,
+                      validator: (v) {
+                        final x = int.tryParse((v ?? '').trim());
+                        if (x == null || x <= 0) return 'Enter a valid price (> 0)';
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Price (PKR)",
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: isSubmitting ? null : _saveFare,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: darkBrown,
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        icon: isSubmitting
+                            ? const SizedBox(
+                                height: 18,
+                                width: 18,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              )
+                            : const Icon(Icons.save, color: Colors.white),
+                        label: const Text("Save Fare", style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 12.h),
+            _SectionHeader(
+              title: "Existing Fares",
+              trailing: IconButton(
+                tooltip: "Refresh",
+                icon: const Icon(Icons.refresh),
+                onPressed: _fetchFares,
+              ),
+            ),
+            if (error != null)
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.h),
+                child: _InlineError(
+                  message: error!,
+                  onRetry: _fetchFares,
+                ),
+              ),
+            if (fares.isEmpty)
+              _EmptyState(
+                icon: Icons.attach_money,
+                title: "No fares yet",
+                subtitle: "Create a fare using the form above.",
+              ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: fares.length,
+              itemBuilder: (context, index) {
+                final f = (fares[index] as Map<String, dynamic>);
+                final service = (f['service'] ?? '').toString();
+                final price = (f['price'] ?? '').toString();
+
+                return Card(
+                  elevation: 1.5,
+                  margin: EdgeInsets.symmetric(vertical: 6.h),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: darkBrown.withOpacity(0.1),
+                      child: const Icon(Icons.monetization_on, color: Colors.black87),
+                    ),
+                    title: Text(service, style: const TextStyle(fontWeight: FontWeight.w600)),
+                    subtitle: Text("PKR $price"),
+                    trailing: IconButton(
+                      tooltip: "Delete",
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => _deleteFare(service),
+                    ),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
